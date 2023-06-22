@@ -42,24 +42,24 @@ services:
                 condition: on-failure
 
     # online judge
-    boca-jail:
-        image: ghcr.io/joaofazolo/boca-docker/boca-jail:latest
-        depends_on:
-            - boca-db
-        deploy:
-            mode: replicated
-            replicas: 2
-            placement:
-                max_replicas_per_node: 8
-            resources:
-                limits:
-                    cpus: '0.50'
-                    memory: 1024M
-                reservations:
-                    cpus: '0.25'
-                    memory: 512M
-            restart_policy:
-                condition: on-failure
+    # boca-jail:
+    #     image: ghcr.io/joaofazolo/boca-docker/boca-jail:latest
+    #     depends_on:
+    #         - boca-db
+    #     deploy:
+    #         mode: replicated
+    #         replicas: 2
+    #         placement:
+    #             max_replicas_per_node: 8
+    #         resources:
+    #             limits:
+    #                 cpus: '0.50'
+    #                 memory: 1024M
+    #             reservations:
+    #                 cpus: '0.25'
+    #                 memory: 512M
+    #         restart_policy:
+    #             condition: on-failure
 
     # database
     boca-db:
@@ -77,3 +77,10 @@ services:
                     memory: 1024M
             restart_policy:
                 condition: on-failure
+        volumes:
+          - ./init:/docker-entrypoint-initdb.d
+
+          - data:/var/lib/postgresql/data
+
+volumes:
+    data:
