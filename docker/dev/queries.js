@@ -337,6 +337,57 @@ const updateTags = async (req, res) => {
 
 }
 
+const deleteTags = async (req, res) => {
+  const contestId = parseInt(req.params.contestId)
+
+  const entityTag = req.body.entityTag
+
+  try{
+    for (let i = 0; i < entityTag.length; i++) {
+      for (let j = 0; j < entityTag[i].tag.length; j++) {
+        const tag = entityTag[i].tag[j]
+
+        if(entityTag[i].entityType === 'language')
+        {
+          const result = await pool.query('DELETE FROM language_tag WHERE tagid = $1 AND contestnumber = $2 AND langnumber = $3', [tag.id, contestId, entityTag[i].entityId])
+
+        }
+        else if(entityTag[i].entityType === 'problem')
+        {
+          const result = await pool.query('DELETE FROM problem_tag WHERE tagid = $1 AND contestnumber = $2 AND problemnumber = $3', [tag.id, contestId, entityTag[i].entityId])
+        }
+        else if(entityTag[i].entityType === 'site')
+        {
+          const result = await pool.query('DELETE FROM site_tag WHERE tagid = $1 AND contestnumber = $2 AND sitenumber = $3', [tag.id, contestId, entityTag[i].entityId])
+        }
+        else if(entityTag[i].entityType === 'site/user')
+        {
+          let split = entityTag[i].entityId.split('/')
+          const result = await pool.query('DELETE FROM user_tag WHERE tagid = $1 AND contestnumber = $2 AND usernumber = $3 AND usersitenumber = $4', [tag.id, contestId, split[1], split[0]])
+        }
+
+        // Verifica se a tag está sendo usada por outra entidade e se não estiver, a exclui da tabela tag
+        const resultproblem = await pool.query('SELECT * FROM problem_tag WHERE tagid = $1 AND contestnumber = $2', [tag.id, contestnumber])
+        const resultlanguage = await pool.query('SELECT * FROM language_tag WHERE tagid = $1 AND contestnumber = $2', [tag.id, contestnumber])
+        const resultsite = await pool.query('SELECT * FROM site_tag WHERE tagid = $1 AND contestnumber = $2', [tag.id, contestnumber])
+        const resultuser = await pool.query('SELECT * FROM user_tag WHERE tagid = $1 AND contestnumber = $2', [tag.id, contestnumber])
+
+        if(resultproblem.rowCount === 0 && resultlanguage.rowCount === 0 && resultsite.rowCount === 0 && resultuser.rowCount === 0)
+        {
+          const result = await pool.query('DELETE FROM tag WHERE tagid = $1 AND contestnumber = $2', [tag.id, contestId])
+        }
+      }
+    }
+    res.status(204).send('Sucess: tag(s) excluída(s).')
+    return
+  }
+  catch(error)
+  {
+    res.status(500).send('Internal Server Error: Ocorreu um erro ao deletar as tags no banco de dados.')
+    return
+  }
+}
+
 
 
 module.exports = {

@@ -34,7 +34,7 @@ app.get('/api/contest/:contestId/tags/site/user/:siteId/:userId', queries.getUse
 
 app.put('/api/contest/:contestId/tags', middlewares.middlewareCheckContest, middlewares.middlewareCheckKeys, middlewares.middlewareCheckKeysPut, queries.updateTags);
 
-// app.delete('/api/contest/:contestId/tags', middlewares.middlewareCheckContest, middlewares.middlewareCheckKeys, queries.deleteTags);
+app.delete('/api/contest/:contestId/tags', middlewares.middlewareCheckContest, middlewares.middlewareCheckKeys, queries.deleteTags);
 
 app.listen(PORT, HOST, () => {
   console.log(`Running on http://${HOST}:${PORT}`);
