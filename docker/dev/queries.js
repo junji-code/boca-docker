@@ -241,7 +241,7 @@ const getUserSite = async (req, res) => {
     const siteId = req.params.siteId
     const userId = req.params.userId
   
-    if(contestId === undefined || entityType === undefined || entityId === undefined)
+    if(contestId === undefined || entityType === undefined || siteId === undefined || userId === undefined)
     {
       res.status(400).send('Bad Request: Pelo menos um dos parâmetros fornecidos na requisição é inválido.')
       return
@@ -256,7 +256,7 @@ const getUserSite = async (req, res) => {
   
     if(tagid === undefined && tagname === undefined && tagvalue === undefined)
     {
-      result = await pool.query('SELECT tag.tagid, tag.tagname, tag.tagvalue FROM user_tag NATURAL JOIN tag WHERE contestnumber = $1 AND usernumber = $2 AND usersitenumber = $3', [contestId, entityId, siteId])
+      result = await pool.query('SELECT tag.tagid, tag.tagname, tag.tagvalue FROM user_tag NATURAL JOIN tag WHERE contestnumber = $1 AND usernumber = $2 AND usersitenumber = $3', [contestId, userId, siteId])
     }
     else if(tagid !== undefined && tagname === undefined && tagvalue === undefined)
     {
@@ -299,7 +299,7 @@ const getUserSite = async (req, res) => {
       "entityTag": [
         {
           "entityType": entityType,
-          "entityId": entityId,
+          "entityId": `${siteId}/${userId}`,
           "tag": tags
         }
       ]
@@ -309,6 +309,7 @@ const getUserSite = async (req, res) => {
   }
   catch(error)
   {
+    console.log(error.message)
     res.status(404).send('Not Found: O ID da competição ou da entidade especificado na requisição não existe.')
     return
   }
