@@ -368,10 +368,10 @@ const deleteTags = async (req, res) => {
         }
 
         // Verifica se a tag está sendo usada por outra entidade e se não estiver, a exclui da tabela tag
-        const resultproblem = await pool.query('SELECT * FROM problem_tag WHERE tagid = $1 AND contestnumber = $2', [tag.id, contestnumber])
-        const resultlanguage = await pool.query('SELECT * FROM language_tag WHERE tagid = $1 AND contestnumber = $2', [tag.id, contestnumber])
-        const resultsite = await pool.query('SELECT * FROM site_tag WHERE tagid = $1 AND contestnumber = $2', [tag.id, contestnumber])
-        const resultuser = await pool.query('SELECT * FROM user_tag WHERE tagid = $1 AND contestnumber = $2', [tag.id, contestnumber])
+        const resultproblem = await pool.query('SELECT * FROM problem_tag WHERE tagid = $1 AND contestnumber = $2', [tag.id, contestId])
+        const resultlanguage = await pool.query('SELECT * FROM language_tag WHERE tagid = $1 AND contestnumber = $2', [tag.id, contestId])
+        const resultsite = await pool.query('SELECT * FROM site_tag WHERE tagid = $1 AND contestnumber = $2', [tag.id, contestId])
+        const resultuser = await pool.query('SELECT * FROM user_tag WHERE tagid = $1 AND contestnumber = $2', [tag.id, contestId])
 
         if(resultproblem.rowCount === 0 && resultlanguage.rowCount === 0 && resultsite.rowCount === 0 && resultuser.rowCount === 0)
         {
@@ -384,6 +384,7 @@ const deleteTags = async (req, res) => {
   }
   catch(error)
   {
+    console.log(error.message)
     res.status(500).send('Internal Server Error: Ocorreu um erro ao deletar as tags no banco de dados.')
     return
   }
