@@ -394,5 +394,6 @@ module.exports = {
   createTag,
   getSemUser,
   getUserSite,
-  updateTags
+  updateTags,
+  deleteTags
 }
